@@ -8,28 +8,24 @@ library(DEFormats)
 ### ============ Declare directories =========
 BASE_DIR <- "/home/TCGA/get_data"
 TCGAOV_RNASEQ_DATA_DIR <- file.path(BASE_DIR, "data")
-TCGAOV_RNASEQ_DOWNLOADS_DIR <- file.path(BASE_DIR, "downloads")
 TCGAOV_SUBTYPES_FILE <- file.path(TCGAOV_RNASEQ_DATA_DIR, "Verhaak_JCI_2013_tableS1.txt")
 
 ### ============ 1. Query =========
 query <- GDCquery(project = "TCGA-OV",
                   data.category = "Transcriptome Profiling",
                   data.type = "Gene Expression Quantification",
-                  workflow.type = "HTSeq - Counts",
-                  barcode = c("TCGA-24-2024-01A-02R-1568-13"))
+                  workflow.type = "HTSeq - Counts")
 
 ### ============ 2. Download =========
 GDCdownload(query = query,
-            method = "client",
-            directory = TCGAOV_RNASEQ_DOWNLOADS_DIR)
+            method = "client")
 
 ### ============ 3. Prepare =========
 se <- GDCprepare(query = query,
                  save = TRUE,
                  save.filename = file.path(TCGAOV_RNASEQ_DATA_DIR, "tcgaovRnaSeq.rda"),
                  summarizedExperiment = TRUE,
-                 directory = TCGAOV_RNASEQ_DOWNLOADS_DIR,
-                 remove.files.prepared = TRUE)
+                 remove.files.prepared = FALSE)
 
 ### ============ 4.Integrate =========
 
