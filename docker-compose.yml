@@ -6,6 +6,6 @@ services:
       - "io.github.pathwaycommons=enrichment get data"
     image: jvwong/enrichment
     volumes:
-      - ./get_data:/home/rstudio
+      - ./get_data:/home/TCGA/get_data
     ports:
       - "8787:8787"

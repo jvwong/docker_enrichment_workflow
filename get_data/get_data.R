@@ -6,7 +6,7 @@ library(SummarizedExperiment)
 library(DEFormats)
 
 ### ============ Declare directories =========
-BASE_DIR <- "/home/rstudio"
+BASE_DIR <- "/home/TCGA/get_data"
 TCGAOV_RNASEQ_DATA_DIR <- file.path(BASE_DIR, "data")
 TCGAOV_RNASEQ_DOWNLOADS_DIR <- file.path(BASE_DIR, "downloads")
 TCGAOV_SUBTYPES_FILE <- file.path(TCGAOV_RNASEQ_DATA_DIR, "Verhaak_JCI_2013_tableS1.txt")
@@ -14,8 +14,9 @@ TCGAOV_SUBTYPES_FILE <- file.path(TCGAOV_RNASEQ_DATA_DIR, "Verhaak_JCI_2013_tabl
 ### ============ 1. Query =========
 query <- GDCquery(project = "TCGA-OV",
                   data.category = "Transcriptome Profiling",
+                  data.type = "Gene Expression Quantification",
                   workflow.type = "HTSeq - Counts",
-                  barcode = "TCGA-24-2024-01A-02R-1568-13")
+                  barcode = c("TCGA-24-2024-01A-02R-1568-13"))
 
 ### ============ 2. Download =========
 GDCdownload(query = query,
@@ -23,12 +24,12 @@ GDCdownload(query = query,
             directory = TCGAOV_RNASEQ_DOWNLOADS_DIR)
 
 ### ============ 3. Prepare =========
-se <- GDCprepare(query=query,
+se <- GDCprepare(query = query,
                  save = TRUE,
                  save.filename = file.path(TCGAOV_RNASEQ_DATA_DIR, "tcgaovRnaSeq.rda"),
-                 summarizedExperiment=TRUE,
-                 remove.files.prepared = TRUE,
-                 directory = TCGAOV_RNASEQ_DOWNLOADS_DIR)
+                 summarizedExperiment = TRUE,
+                 directory = TCGAOV_RNASEQ_DOWNLOADS_DIR,
+                 remove.files.prepared = TRUE)
 
 ### ============ 4.Integrate =========
 
@@ -50,7 +51,7 @@ indices_subtype_in_se <- match(barcodes, TCGAOV_subtypes$ID)
 se <- se[, indices_se_with_subtype]
 
 ### convert to DGEList
-TCGAOV_data = DGEList(se, group=TCGAOV_subtypes$SUBTYPE[indices_subtype_in_se])
+TCGAOV_data = DEFormats::DGEList(se, group=TCGAOV_subtypes$SUBTYPE[indices_subtype_in_se])
 
 ### save to TCGAOV_RNASEQ_DATA_DIR
 save(TCGAOV_data, file=file.path(TCGAOV_RNASEQ_DATA_DIR, "TCGAOV_data.rda"))
