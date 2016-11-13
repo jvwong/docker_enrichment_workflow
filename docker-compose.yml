@@ -1,0 +1,11 @@
+version: '2'
+services:
+  rstudio:
+    container_name: get_data
+    labels:
+      - "io.github.pathwaycommons=enrichment get data"
+    image: jvwong/enrichment
+    volumes:
+      - ./get_data:/home/rstudio
+    ports:
+      - "8787:8787"
